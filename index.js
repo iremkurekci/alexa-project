@@ -1,13 +1,11 @@
-const puppeteer = require('puppeteer');
-const global = require('./global');
-const country = require('./country');
+const operations = require('./operations');
 
 try {
     (async () => {
 
-        await global.initialize();
+        await operations.initialize('global');
 
-        let itemCount_Global = await global.count();
+        let itemCount_Global = await operations.count('global');
         let globalData = [];
         let childNum_Global = null;
         let lineBaseSelector_Global = null;
@@ -16,19 +14,17 @@ try {
         for (let i = 1; i <= itemCount_Global; i++) {
             childNum_Global = i + 1;
             lineBaseSelector_Global = '#alx-content > div.row-fluid.TopSites.AlexaTool.padding20 > section.page-product-content.summary.padding20 > span > span > div > div > div > div:nth-child(' + `${childNum_Global}` + ')';
-            let detailsGlobal = await global.getDetails(lineBaseSelector_Global);
+            let detailsGlobal = await operations.getDetails('global',lineBaseSelector_Global);
             globalData.push(detailsGlobal);
         }
 
-        global.jsToJSON(globalData);
+        operations.jsToJSON('global',globalData);
 
-        const puppeteer = require('puppeteer');
+        await operations.timeToWaitRandomly();
 
-        await global.timeToWaitRandomly();
+        await operations.initialize('country');
 
-        await country.initialize();
-
-        let itemCount_Country = await country.count(); // [li,ul]
+        let itemCount_Country = await operations.count('country'); // [li,ul]
         let countryData = [];
         let ul_ChildNum_Country = null;
         let li_ChildNum_Country = null;
@@ -40,18 +36,15 @@ try {
                 li_ChildNum_Country = i;
                 ul_ChildNum_Country = j;
                 lineBaseSelector_Country = '#alx-content > div.row-fluid.TopSites.Alexarest > section.page-product-content.summary > span > span > div > div > div > div:nth-child(1) > ul:nth-child(' + `${ul_ChildNum_Country}` + ') > li:nth-child(' + `${li_ChildNum_Country}` + ') > a';
-                let detailsCountry = await country.getDetails(lineBaseSelector_Country);
+                let detailsCountry = await operations.getDetails('country',lineBaseSelector_Country);
                 countryData.push(detailsCountry);
             }
         }
 
-        await global.timeToWaitRandomly();
-        await country.getContentCountry(countryData);
-        // await countryData.map(item => country.getContentCountry(item));
+        await operations.timeToWaitRandomly();
+        await operations.getContentCountry(countryData);
 
-        debugger;
-
-        // await browser.close();
+        await browser.close();
 
     })();
 
